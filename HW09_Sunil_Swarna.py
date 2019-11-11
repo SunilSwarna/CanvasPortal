@@ -79,10 +79,14 @@ class Major():
     @staticmethod
     def compute_remaining_courses(major, courses, name):
         completed = set([ course for course, grade in courses.items() if grade in Major.valid_grades])
-        required = set(Major.majors[major]['R']) - completed
-        electives = None if len(set(Major.majors[major]['E']).intersection(completed))>0 else set(Major.majors[major]['E']) - completed 
-        return sorted(completed), required, electives
-        
+        if major in Major.majors:
+            required = set(Major.majors[major]['R']) - completed
+            electives = None if len(set(Major.majors[major]['E']).intersection(completed))>0 else set(Major.majors[major]['E']) - completed 
+            return sorted(completed), required, electives
+        else:
+            print(f"\n Warning: {major} is Not found !..")
+            return sorted(completed), None, None
+
 class Container:
     """ 
     It is a repository that hold the students, instructors and grades for a single University
@@ -128,12 +132,12 @@ class Container:
                 if studentCwid in self.student_info.keys():
                     self.student_info[studentCwid].add_course_grade(course, grade)
                 else:
-                    print(f"Found grade for unknow student {studentCwid}")
+                    print(f"Warning: Found grade for unknow student {studentCwid}")
                 
                 if instructorCwid in self.insructors_info.keys():
                     self.insructors_info[instructorCwid].add_course_noofstudents(course) 
                 else:
-                    print(f"Found grade for unknow instrcutor {instructorCwid}")
+                    print(f"Warning: Found grade for unknow instrcutor {instructorCwid}")
 
         else:
             print(f"Can't open {grades_file} for reading!..")
@@ -151,8 +155,6 @@ class Container:
         else:
             print(
                 f"Can't open {majors_file} for reading!..")
-
-        # print(Major.majors)
 
 
     def file_reading_gen(self, path, fields, sep=',', header=False):
@@ -224,11 +226,16 @@ class Container:
         """ Pretty table for printing the major summary"""
 
         pt = PrettyTable(field_names = ['Dept', 'Required', 'Electives'])
+        majors_list = []
         print(f"\nMajors Summary")
         for major in Major.majors.keys():
             pt.add_row([major, sorted(Major.majors[major]['R']), sorted(Major.majors[major]['E'])])
+            majors_list.append([major, sorted(Major.majors[major]['R']), sorted(Major.majors[major]['E'])])
 
         print(pt)
+
+        return majors_list
+
 def main():
     try:
         stevens = Container('C:/Users/sunil/Downloads/HE-04/stevensdata')
