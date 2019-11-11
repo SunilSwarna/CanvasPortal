@@ -84,7 +84,7 @@ class Major():
             electives = None if len(set(Major.majors[major]['E']).intersection(completed))>0 else set(Major.majors[major]['E']) - completed 
             return sorted(completed), required, electives
         else:
-            print(f"\n Warning: {major} is Not found !..")
+            print(f"\n Warning: Major {major} is Not found for student {name} in Majors!..")
             return sorted(completed), None, None
 
 class Container:
@@ -196,8 +196,9 @@ class Container:
         pt = PrettyTable(field_names = ['CWID', 'Name', 'Major', 'Completed Courses', 'Remaining Required', 'Remaining Electives'])
         print(f"\nStudent Summary")
         for student_instance in self.student_info.values():
-            pt.add_row(student_instance.pretty_table_student())
-            student_list.append(student_instance.pretty_table_student())
+            student_info = student_instance.pretty_table_student()
+            pt.add_row(student_info)
+            student_list.append(student_info)
 
         print(pt)
 
@@ -247,18 +248,3 @@ def main():
 
 if __name__ == "__main__":
     main()  # Main routine for priting the data in the code
-
-
-#changes to make
-'''
-make the pt headers as class atributes & use them in pretty ybale
-use yield for pretty table in instrctor
-'''
-
-#In the test file
-'''
-expected  in dic witk key as cwid & value is the data
-calculated alos in dic with pretty yable code
-for instrctor dictionary & tuple
-cauculates with tuple() 
-'''
