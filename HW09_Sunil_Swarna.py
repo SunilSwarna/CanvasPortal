@@ -9,6 +9,8 @@ Implement a system will also be used by faculty advisors to help students to cre
 import os
 from collections import defaultdict
 from prettytable import PrettyTable
+import sqlite3
+
 
 class Student():
     """
@@ -113,21 +115,21 @@ class Container:
         majors_file = 'majors.txt'
 
         if students_file in os.listdir(self.directory):
-            for cwid, name, major in self.file_reading_gen(os.path.join(self.directory, students_file), 3, ";", True): 
+            for cwid, name, major in self.file_reading_gen(os.path.join(self.directory, students_file), 3, "\t", True): 
                 self.student_info[cwid] = Student(cwid, name, major)
         else:
             print(
                 f"Can't open {students_file} for reading!..")
         
         if instructors_file in os.listdir(self.directory):
-            for cwid, name, department in self.file_reading_gen(os.path.join(self.directory, instructors_file), 3, "|", True): 
+            for cwid, name, department in self.file_reading_gen(os.path.join(self.directory, instructors_file), 3, "\t", True): 
                 self.insructors_info[cwid] = Instructor(cwid, name, department)
         else:
             print(
                 f"Can't open {instructors_file} for reading!..")
 
         if grades_file in os.listdir(self.directory):
-            for studentCwid, course, grade, instructorCwid in  self.file_reading_gen(os.path.join(self.directory, grades_file), 4, "|", True):
+            for studentCwid, course, grade, instructorCwid in  self.file_reading_gen(os.path.join(self.directory, grades_file), 4, "\t", True):
                 
                 if studentCwid in self.student_info.keys():
                     self.student_info[studentCwid].add_course_grade(course, grade)
@@ -237,12 +239,36 @@ class Container:
 
         return majors_list
 
+    def instructor_table_db(self, db_path):
+        try:
+            db = sqlite3.connect(db_path)
+        except Exception as e:
+            print(e)
+        else:
+            query = """ select I.CWID, I.Name , I.Dept, G.Course, count(*) as Students from instructors I join
+                grades G  on I.CWID = G.InstructorCWID GROUP BY G.InstructorCWID,G.Course order by  CWID desc;"""
+
+
+            pt = PrettyTable(field_names = ['CWID', 'Name', 'Dept', 'Course', 'Students'])
+            
+            try:
+
+                print(f"\nInstructor Summary From DataBase")
+                for row in db.execute(query):
+                    pt.add_row(list(row))
+                print(pt)
+            except Exception as e:
+                print(e)
+            else:
+                pass
+
 def main():
     try:
         stevens = Container('C:/Users/sunil/Downloads/HE-04/stevensdata')
         stevens.major_summary()
         stevens.students_summary()
         stevens.instructor_summary()
+        stevens.instructor_table_db('810_startup.db')
     except Exception as e:
         print(e)
 
