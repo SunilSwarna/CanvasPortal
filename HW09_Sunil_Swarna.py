@@ -252,15 +252,17 @@ class Container:
             pt = PrettyTable(field_names = ['CWID', 'Name', 'Dept', 'Course', 'Students'])
             
             try:
-
+                db_list =[]
                 print(f"\nInstructor Summary From DataBase")
                 for row in db.execute(query):
                     pt.add_row(list(row))
+                    db_list.append(list(row))
                 print(pt)
             except Exception as e:
                 print(e)
             else:
                 pass
+                return db_list
 
 def main():
     try:
