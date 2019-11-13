@@ -20,8 +20,10 @@ class TestContainer(unittest.TestCase):
         test_path = Container(file_path)
 
         students_pretty_table = test_path.students_summary()
-        expected = [['10103', 'Baldwin, C', 'SFEN', ['CS 501', 'SSW 564', 'SSW 567', 'SSW 687'], {'SSW 540'}, {'SSW 555'}], ['11658', 'Kelly, P', 'SYEN', [], {'SYS 800', 'SYS 612'}, {'SSW 810'}]]
-        self.assertEqual(students_pretty_table, expected) 
+        expected = [['10103', 'Jobs, S', 'SFEN', ['CS 501', 'SSW 810'], {'SSW 555'}, None],
+         ['10115', 'Bezos, J', 'SFEN', ['SSW 810'], {'SSW 555'}, {'CS 501'}]]
+        self.assertEqual(students_pretty_table, expected)
+
 
     def test_instructor_table(self):
         """ Verifying instructors pretty table functionality """
@@ -29,9 +31,8 @@ class TestContainer(unittest.TestCase):
         test_path = Container(file_path)
 
         instructors_pretty_table = test_path.instructor_summary()
-        expected = [['98765', 'Einstein, A', 'SFEN', 'SSW 567', 1], 
-        ['98765', 'Einstein, A', 'SFEN', 'SSW 540', 1], ['98764', 'Feynman, R', 'SFEN', 'SSW 564', 1], 
-        ['98764', 'Feynman, R', 'SFEN', 'SSW 687', 1], ['98764', 'Feynman, R', 'SFEN', 'CS 501', 1]]
+        expected = [['98763', 'Rowland, J', 'SFEN', 'SSW 810', 2], 
+        ['98762', 'Hawking, S', 'CS', 'CS 501', 1], ['98762', 'Hawking, S', 'CS', 'CS 546', 1]]
         self.assertEqual(instructors_pretty_table, expected)
 
     def test_majors_table(self):
@@ -41,9 +42,19 @@ class TestContainer(unittest.TestCase):
         test_path = Container(file_path)
 
         majors_pretty_table = test_path.major_summary()
-        expected = [['SFEN', ['SSW 540', 'SSW 564'], ['SSW 555']], 
-        ['SYEN', ['SYS 612', 'SYS 800'], ['SSW 810']]]
+        expected = [['SFEN', ['SSW 555'], ['CS 501']], 
+        ['CS', ['CS 546'], ['SSW 810']]]
         self.assertEqual(majors_pretty_table, expected)
+
+    def test_database_instructor(self):
+        """ Verifying instructors database pretty table functionality """
+        test_path = Container(file_path)
+        db_instructors = test_path.instructor_table_db('810_startup.db')
+        expected = [['98764', 'Cohen, R', 'SFEN', 'CS 546', 1], ['98763', 'Rowland, J', 'SFEN', 'SSW 555', 1], 
+        ['98763', 'Rowland, J', 'SFEN', 'SSW 810', 4], ['98762', 'Hawking, S', 'CS', 'CS 501', 1],
+         ['98762', 'Hawking, S', 'CS', 'CS 546', 1], ['98762', 'Hawking, S', 'CS', 'CS 570', 1]]
+        self.assertEqual(db_instructors, expected)
+
 
 
 if __name__ == "__main__":
